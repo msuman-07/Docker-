@@ -1,0 +1,294 @@
+###################### Docker installations in EC2 Linux Machine ######################
+
+sudo su
+
+yum update -y
+
+yum install docker -y
+
+which docker
+
+docker --version
+
+(Cntrl + L) Will clear the screen
+
+service docker status
+
+service docker start
+
+service docker status
+
+CNTRL + C
+
+docker run -it ubuntu /bin/bash
+
+
+Check "Docker hub" in google and sign up /sign in
+
+
+exit 
+(Exit from docker)
+
+docker images
+
+docker run -it /bin/bash (Create a container)
+
+docker ps -a (How many container I have)
+
+docker run -it --name suman ubuntu /bin/bash (Creating a docker with my name)
+
+exit (Exit from created docker)
+
+docker ps -a (Check how many created)
+
+docker ps (It will show you docker that are currently running)
+
+docker start suman (container name which is suman)
+
+docker ps (You can see it is active and running)
+
+docker attach suman (used to enter into the container)
+
+ls
+
+exit (Used to exit a container)
+
+docker rm suman (To remove a container, use - docker rm (container-name) )
+
+docker start suman 
+
+docker attach suman
+
+ls
+
+cd tmp (You can #tmp next line)
+
+touch file1 file2 file3 file4
+
+ls
+
+exit
+
+docker commit suman newimage (Creating a new image)
+
+docker images (Check if a image is created)
+
+docker run -it --name testcon newimage /bin/bash
+
+ls
+
+cd tmp (Check for files) 
+
+ls
+
+exit
+
+vi DockerFile (Creating a docker file)
+
+click "i" (To insert a cmnd in file)
+
+(In that docker file write this txt)
+
+FROM ubuntu
+WORKDIR /tmp
+RUN echo "hello learner" > /tmp/testfile
+COPY testfile1 /tmp
+
+Then click (Esc) 
+
+Then type :wq (exit from file)
+
+
+touch testfile1
+
+ls
+
+docker build -t docfileimg .
+
+docker run -it --name docfilecon docfileimg /bin/bash
+
+ls
+
+exit
+
+CREATE VOLUME IN DOCKER FILE
+
+vi Dockerfile
+
+Click 'i'
+
+(Write this in the file)
+
+FROM ubuntu
+VOLUME ["/myvolume"]
+WORKDIR /tmp
+RUN echo "hello learner" > /tmp/testfile
+COPY testfile1 /tmp
+
+Then click (Esc) 
+
+Then type :wq (exit from file)
+
+docker build -t myimg .
+
+docker images
+
+docker run -it --name container2 myimg /bin/bash
+
+ls
+
+cd ..
+
+ls
+
+cd myvolume
+
+touch file4 file5
+
+ls
+
+exit
+
+docker run -it --name container3 --privileged=true --volumes-from container2 ubuntu /bin/bash
+
+ls
+
+cd myvolume
+
+ls
+
+exit
+
+CREATE A PORT AND RUN SOME COMMANDS
+
+docker run -td --name techcon -p 80:80 ubuntu
+
+ls
+
+docker ps
+
+docker port techcon
+
+docker exec -it techcon /bin/bash
+
+apt-get update
+
+apt-get install apache2 -y
+
+cd var/www/html
+
+echo "training" > index.html
+
+ls
+
+service apache2 status
+
+service apache2 start
+
+service apache2 status (It must run)
+
+exit
+
+=========
+
+docker images
+
+docker ps -a
+
+docker run -it --name test1 ubuntu /bin/bash
+
+touch file1 file2 file3 file4 file5
+
+ls
+
+cd tmp/
+
+touch file4 file5
+
+ls
+
+exit
+
+docker commit test1 image1
+
+docker images
+
+docker login
+
+( Put your docker website id and pw)
+
+docker tag image1 sumanraj07/projectlearn
+
+docker push sumanraj07/projectlearn
+
+
+Go and check in your Docker Dashboard u can see the project created and you can pull it from anywhere
+
+Terminate your machine
+
+=================================================================
+
+
+This setup requires 3 separate instances: 1 Manager node and 2 Worker nodes.
+
+1. Create 3 ubuntu instance on AWS with Docker engine installed on them
+2. docker swarm init --advertise-addr <MANAGER-IP>
+3. docker swarm join-token worker
+4. docker node ls
+
+Deploy a Service in Swarm
+
+1) docker service create --name mysvc --replicas 4 -p 8006:8080 tomcat
+2) docker service ls
+3) docker service ps <serviceName>
+4) docker service rm <serviceName>
+
+ 
+Create 3 isntances as (master, node1, node2)
+
+In 3 instances type this commands
+
+sudo su
+
+sudo apt-get update
+
+sudo apt install docker.io
+
+
+Then go to master instance then type this cmnd
+
+docker swarm init --advertise-addr <MANAGER-IP> 
+(Copy and paste ur ip address in <MANAGER-IP>)
+
+
+Then you will get a message and cmnd like below -
+
+docker swarm join --token SWMTKN-1-3h02eqelgdtks9fu0ythw6tsemzbo0t37dauajxf9prn9zlm0f-acmfj1bunu7nw7uzrin7qyamq 13.233.216.107:2377
+
+Now paste this cmnd on both the node 1 and node 2 terminals
+
+You will get a message like this on both the instances - 
+This node joined a swarm as a worker
+
+Then go to master instance and type - 
+docker node ls
+
+Now you see 1 master and 2 slave , three will be active
+
+Now go to master instance and type this cmnd  - 
+
+
+docker service create --name mysvc --replicas 4 -p 8006:8080 tomcat
+
+docker service ls
+
+Then go to this website there you can see tomcat
+http://<IP-ADDRESS>:8006/
+
+docker service create --name mysvc2 --replicas 4 -p 8008:80 httpd
+
+docker service ls
+
+Then go to this website there you can see Apache HTTP Server
+http://<IP-ADDRESS>:8008/
+
