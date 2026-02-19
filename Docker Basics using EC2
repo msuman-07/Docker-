@@ -83,11 +83,11 @@ ls
 
 exit
 
-vi DockerFile (Creating a docker file)
+vi DockerFile (Creating a nano file)
 
 click "i" (To insert a cmnd in file)
 
-(In that docker file write this txt)
+(In that nano file write this txt)
 
 FROM ubuntu
 WORKDIR /tmp
